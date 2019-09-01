@@ -6,7 +6,7 @@
    </div>
    <!-- 表单组件 -->
     <!-- 数据校验,首先要给el-from  一个model属性  表示数据对象 -->
-   <el-form :model= "loginForm" :rules= "loginRules" style="margin-top:20px">
+   <el-form ref="loginForm" :model= "loginForm" :rules= "loginRules" style="margin-top:20px">
        <!-- 表单项 -->
             <el-form-item prop="mobile">
                 <!-- 放置组件内容 -->
@@ -24,7 +24,7 @@
                  <el-checkbox v-model = "loginForm.checked">我已同意和阅读</el-checkbox>
                  </el-form-item>
             <el-form-item>
-               <el-button  type="primary" style="width:100%">登陆</el-button>
+               <el-button  @click= "login" type="primary" style="width:100%">登陆</el-button>
             </el-form-item>
    </el-form>
    </el-card>
@@ -71,8 +71,42 @@ export default {
         }]
       }
     }
+  },
+  methods: {
+    login () {
+      // 通过el-form 组件的validata方法,检验整个表单的数据
+      // 传入一个回调函数  idOk为true 说明所有的校验规则都成功了
+      // 如果为false,说明有错误
+      this.$refs.loginForm.validate(ISOK => {
+        if (ISOK) {
+          // 请求
+          // axios data是放置body参数的 params是放置地址参数的
+          // 结果执行完成之后是一个promise对象
+          this.$axios({
+            url: '/authorizations',
+            method: 'post',
+            data: this.loginForm
+          }).then(result => {
+            // console.log(result)
+            // console.log(result.data.data.token)
+            // 放到前端缓存中
+            // setItem( 名称,值)
+            window.localStorage.setItem('user-token', result.data.data.token)
+            // 弄好了之后进行跳转
+            // 用编程式导航,登录成跳转到首页
+            this.$router.push('/')
+          }).catch(() => {
+            this.$message({
+              message: '手机号或者验证码错误',
+              type: 'warning'
+            })
+          })
+        }
+      })
+    }
   }
 }
+
 </script>
 
 <style lang="less" scoped>
