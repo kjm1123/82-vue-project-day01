@@ -6,12 +6,12 @@
    </div>
    <!-- 表单组件 -->
     <!-- 数据校验,首先要给el-from  一个model属性  表示数据对象 -->
-   <el-form :model=" loginForm" :rules= "loginForm" style="margin-top:20px">
+   <el-form :model= "loginForm" :rules= "loginRules" style="margin-top:20px">
        <!-- 表单项 -->
             <el-form-item prop="mobile">
                 <!-- 放置组件内容 -->
                 <!-- prpo 绑定需要校验的字段名 但是不写loginForm.mobile,只写mobile-->
-                <el-input v-model = "loginForm.mobile" placeholder="请输入手机号">  </el-input>
+                <el-input v-model= "loginForm.mobile" placeholder="请输入手机号">  </el-input>
 
             </el-form-item>
             <el-form-item prop="code">
@@ -19,9 +19,9 @@
                 <el-input v-model = "loginForm.code" style="width:250px" placeholder="请输入验证码"></el-input>
                 <el-button style="float:right">发送验证码</el-button>
             </el-form-item>
-             <el-form-item class="check">
+             <el-form-item prop="checked">
                  <!-- 绑定协议 -->
-                 <el-checkbox v-model = "loginForm.check">我已同意和阅读</el-checkbox>
+                 <el-checkbox v-model = "loginForm.checked">我已同意和阅读</el-checkbox>
                  </el-form-item>
             <el-form-item>
                <el-button  type="primary" style="width:100%">登陆</el-button>
@@ -35,6 +35,13 @@
 <script>
 export default {
   data () {
+    let validator = function (rule, value, callBack) {
+      if (value) {
+        callBack() // 如果value为true直接通过
+      } else {
+        callBack(new Error('你必须同意'))
+      }
+    }
     return {
       loginForm: {
         mobile: '', // 手机号
@@ -47,6 +54,20 @@ export default {
         mobile: [{
           required: true, // 意味着必填
           message: '手机号不能为空' // 意味着手机号不能为空
+        }, {
+          pattern: /^1[3456789]\d{9}$/,
+          message: '手机号不正确'// 正则表达式
+        }],
+        code: [{
+          //  required只校验空字符串. null 和underfind  不校验true/false
+          required: true, // 意味着必填
+          message: '验证码不能为空' // 意味着验证码不能为空
+        }, {
+          pattern: /^\d{6}$/,
+          message: '验证码必须为6位'
+        }],
+        checked: [{
+          validator
         }]
       }
     }
