@@ -10,17 +10,17 @@
     <el-col :span="3" class="right">
         <!-- 获取图片,得用动态来获取 -->
       <img class="head-img" :src="userInfo.photo ? userInfo.photo : defaultImg " alt />
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" @command=" handleMenuItem">
         <!-- 下拉菜单是 匿名插槽 -->
-        <span class="el-dropdown-link">
+        <span class="el-dropdown-link" @command="handleMenuItem">
          {{userInfo.name}}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <!-- 下拉内容是具名插槽 -->
-          <el-dropdown-item>个人信息</el-dropdown-item>
-          <el-dropdown-item>git地址</el-dropdown-item>
-          <el-dropdown-item>退出</el-dropdown-item>
+          <el-dropdown-item command="account">个人信息</el-dropdown-item>
+          <el-dropdown-item command="git">git地址</el-dropdown-item>
+          <el-dropdown-item command="lgout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </el-col>
@@ -39,6 +39,7 @@ export default {
   methods: {
     //   获取用户数据
     getUseInfo () {
+    //   console.log(1)
       // 获取token
       let token = window.localStorage.getItem('user-token')
       this.$axios({
@@ -46,9 +47,26 @@ export default {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(result => {
-        //   console.log(result)
+          console.log(result)
           this.userInfo = result.data.data
         })
+    },
+    handleMenuItem (command) {
+      // 用if语句
+      if (command === 'account') {
+        // 账户信息
+        // console.log('account')
+      } else if (command === 'git') {
+        // git地址
+        // console.log('git')
+      } else {
+        //   清空所有缓存 (只能清除当前项目的缓存)
+        window.localStorage.clear()
+        // 退出
+        // console.log('退出')
+        // 跳转到登录页
+        this.$router.push('./login')
+      }
     }
   },
   created () {
