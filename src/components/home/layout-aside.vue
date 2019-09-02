@@ -1,40 +1,65 @@
 <template>
-    <el-menu
-      default-active="2"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>导航一</span>
-        </template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="1-4-1">选项1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
+<div class="layout-adide">
+  <div class="title">
+    <img src="../../assets/images/img/logo_admin.png" alt="">
+  </div>
+     <el-menu
+
+      background-color="#323745"
+      text-color="#adafb5"
+      active-text-color="#ffd04b">
+
       <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
+        <i class="el-icon-s-home"></i>
+        <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-      <el-menu-item index="4">
+        <!-- <el-submenu>是有折叠的 -->
+          <el-submenu>
+            <!-- <el-submenu>定义具名插槽 title -->
+            <template slot="title">
+                <i class="el-icon-s-shop"></i>
+                  <span>内容管理</span>
+               </template>
+            <el-menu-item>
+                发布文章
+                 </el-menu-item>
+                 <el-menu-item>
+                内容列表
+                 </el-menu-item>
+                  <el-menu-item>
+                评论管理
+                 </el-menu-item>
+                  <el-menu-item>
+                素材管理
+                 </el-menu-item>
+             </el-submenu>
+               <el-submenu>
+            <!-- <el-submenu>定义具名插槽 title -->
+            <template slot="title">
+                <i class="el-icon-s-custom"></i>
+                  <span>粉丝管理</span>
+               </template>
+            <el-menu-item>
+                图文数据
+                 </el-menu-item>
+                 <el-menu-item>
+                粉丝概况
+                 </el-menu-item>
+                  <el-menu-item>
+                粉丝列表
+                 </el-menu-item>
+                  <el-menu-item>
+                粉丝画像
+                 </el-menu-item>
+             </el-submenu>
+          </el-menu-item>
+      <el-menu-item index="3">
         <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
+        <span slot="title">账户信息</span>
       </el-menu-item>
     </el-menu>
+</div>
+
 </template>
 
 <script>
@@ -43,6 +68,19 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+  .layout-adide {
+    width: 200px;
+    height: 100vh;
+    background-color: #323745;
+    .title {
+      text-align: center;
+      background-color: #2e2f32;
+      padding: 10px 0;
+      img {
+        height: 30px;
 
+      }
+    }
+  }
 </style>
