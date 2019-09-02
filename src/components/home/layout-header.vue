@@ -47,7 +47,7 @@ export default {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(result => {
-          console.log(result)
+        //   console.log(result)
           this.userInfo = result.data.data
         })
     },
@@ -59,6 +59,8 @@ export default {
       } else if (command === 'git') {
         // git地址
         // console.log('git')
+        // 点击git的时候,会跳转到下面那个地址
+        window.location.href = 'https://github.com/shuiruohanyu/82heimatoutiao' // 改变当前的地址
       } else {
         //   清空所有缓存 (只能清除当前项目的缓存)
         window.localStorage.clear()
