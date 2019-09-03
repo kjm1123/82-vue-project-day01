@@ -41,10 +41,10 @@ export default {
     getUseInfo () {
     //   console.log(1)
       // 获取token
-      let token = window.localStorage.getItem('user-token')
+    //   let token = window.localStorage.getItem('user-token')
       this.$axios({
-        url: '/user/profile',
-        headers: { Authorization: `Bearer ${token}` }
+        url: '/user/profile'
+        // headers: { Authorization: `Bearer ${token}` }
       })
         .then(result => {
         //   console.log(result)

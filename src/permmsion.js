@@ -4,7 +4,7 @@ router.beforeEach(function (to, from, next) {
   if (to.path.startsWith('/home')) {
     let token = window.localStorage.getItem('user-token')
     if (token) {
-      // 房型
+      // 放行
       next()
     } else {
       next('/login')
@@ -14,4 +14,5 @@ router.beforeEach(function (to, from, next) {
     next()
   }
 })
+// 导出
 export default router
