@@ -91,7 +91,7 @@ export default {
             // console.log(result.data.data.token)
             // 放到前端缓存中
             // setItem( 名称,值)
-            window.localStorage.setItem('user-token', result.data.data.token)
+            window.localStorage.setItem('user-token', result.data.token)
             // 弄好了之后进行跳转
             // 用编程式导航,登录成跳转到首页
             this.$router.push('/')

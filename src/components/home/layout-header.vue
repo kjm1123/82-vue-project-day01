@@ -48,7 +48,8 @@ export default {
       })
         .then(result => {
         //   console.log(result)
-          this.userInfo = result.data.data
+          // debugger
+          this.userInfo = result.data
         })
     },
     handleMenuItem (command) {
