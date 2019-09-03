@@ -23,6 +23,10 @@ export default new Router({
       children: [{
         path: '',
         component: Main
+      },
+      {
+        path: '/home/comment',
+        component: () => import('./views/comment/index.vue')
       }]
     }
     // {
