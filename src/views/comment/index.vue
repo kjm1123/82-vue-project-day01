@@ -1,6 +1,6 @@
 <template>
   <!-- 最外层用 el-card 卡片做页面 -->
-  <el-card>
+  <el-card v-loading="loading">
     <!-- 利用面包屑的标签(具名插槽) -->
     <bread-crumb slot="header">
       <template slot="title">评论列表</template>
@@ -38,6 +38,7 @@
 export default {
   data () {
     return {
+      loading: false, // 控制进度条的状态
       list: [],
       page: {
         page: 1, // 当前页码
@@ -80,12 +81,14 @@ export default {
       return row.comment_status ? '正常' : '关闭'
     },
     getComments () {
+      this.loading = true // 请求之前把进度条打开
       // query参数  就相当于 get参数  路径参数  URL参数  params
       // body 路径参数 data
       this.$axios({
         url: '/articles',
         params: { response_type: 'comment', page: this.page.page, per_page: this.page.pageSize }
       }).then(result => {
+        this.loading = false // 请求之后把进度条关闭
         // console.log(result.data)
         // 再把打印出来的数据给了当前的list
         this.list = result.data.results
