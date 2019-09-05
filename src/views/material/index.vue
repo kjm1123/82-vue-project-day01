@@ -18,6 +18,13 @@
             </el-row>
           </el-card>
         </div>
+         <el-row type="flex" justify="center">
+          <el-pagination  @current-change= "changePage" :current-page = "page.page" :page-size = 'page.pageSize'  :total = "page.total"
+  background
+  layout="prev, pager, next"
+ >
+</el-pagination>
+      </el-row>
       </el-tab-pane>
       <el-tab-pane label="收藏图片 " name="collect">
         <!-- 全部收藏的内容 -->
@@ -26,13 +33,20 @@
           <el-card class="img-card" v-for="item in list" :key="item.id">
             <img :src="item.url" alt />
             <!-- <el-row class="operate" align="middle" type="flex" justify="space-around">
-              <!-- space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。 -->
+            space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。
 
-              <!-- <i :style="{color: item.is_collected ? 'red' : ''}" class="el-icon-star-on"></i>
+            <!-- <i :style="{color: item.is_collected ? 'red' : ''}" class="el-icon-star-on"></i>
               <i class="el-icon-delete"></i>
-            </el-row> -->
+            </el-row>-->
           </el-card>
         </div>
+         <el-row type="flex" justify="center">
+          <el-pagination  @current-change= "changePage" :current-page = "page.page" :page-size = 'page.pageSize'  :total = "page.total"
+  background
+  layout="prev, pager, next"
+ >
+</el-pagination>
+      </el-row>
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -43,19 +57,30 @@ export default {
   data () {
     return {
       activeName: 'all', // 默认为全部素材
-      list: [] // 全部素材和收藏图片都用在list这个数据上
-    //   collect_list: []
+      list: [], // 全部素材和收藏图片都用在list这个数据上
+      //   collect_list: []
+      page: {
+        page: 1,
+        pageSize: 10,
+        total: 0
+      }
     }
   },
   methods: {
+    // 最新页码
+    changePage (newPage) {
+      this.page.page = newPage
+      this.getMaterial()
+    },
     // 切换页签
     changeTab () {
-    //   alert(this.activeName)
-    // this.activeName 是最新的数据
-    // 加载不同类型的数据
-    // all =>  所有的数据
-    // collect =?  收藏的数据
-    // 调用
+      //   alert(this.activeName)
+      // this.activeName 是最新的数据
+      // 加载不同类型的数据
+      // all =>  所有的数据
+      // collect =?  收藏的数据
+      // 调用
+      this.page.page = 1
       this.getMaterial()
     },
     getMaterial () {
@@ -63,10 +88,13 @@ export default {
       this.$axios({
         url: '/user/images',
         params: {
+          page: this.page.page, // 默认第一次是第一页
+          per_page: this.page.pageSize, // 默认pageSize是10条
           collect: this.activeName === 'collect' // collect  为false就是查全部数据
         }
       }).then(result => {
         this.list = result.data.results
+        this.page.total = result.data.total_count // 将图片总数赋值给总页码
       })
     }
   },
