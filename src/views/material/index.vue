@@ -4,17 +4,21 @@
     <bread-crumb slot="header">
       <template slot="title">素材管理</template>
     </bread-crumb>
-    <el-tabs v-model="activeName" @tab-click="changeTab">
+    <!-- //上传素材 -->
+      <el-upload :show-file-list = "false" :http-request = "uploadImg"  action ="" class="upload-btn">
+        <el-button  size="small" type="primary">上传图片</el-button>
+      </el-upload>
+    <el-tabs v-model = "activeName" @tab-click = "changeTab">
       <el-tab-pane label="全部素材" name="all">
         <!-- //全部素材的内容 -->
         <div class="card-list">
-          <el-card class="img-card" v-for="item in list" :key="item.id">
-            <img :src="item.url" alt />
+          <el-card class="img-card" v-for = "item in list" :key = "item.id">
+            <img :src = "item.url" alt />
             <el-row class="operate" align="middle" type="flex" justify="space-around">
               <!-- space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。 -->
 
-              <i :style="{color: item.is_collected ? 'red' : ''}" class="el-icon-star-on"></i>
-              <i class="el-icon-delete"></i>
+              <i @click = "collectOrcancel(item)" :style = "{color: item.is_collected ?  'red' : '' }" class="el-icon-star-on"></i>
+              <i @click = "delImg(item)" class="el-icon-delete"></i>
             </el-row>
           </el-card>
         </div>
@@ -30,12 +34,12 @@
         <!-- 全部收藏的内容 -->
 
         <div class="card-list">
-          <el-card class="img-card" v-for="item in list" :key="item.id">
+          <el-card class="img-card" v-for = "item in list" :key = "item.id">
             <img :src="item.url" alt />
             <!-- <el-row class="operate" align="middle" type="flex" justify="space-around">
             space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。
 
-            <!-- <i :style="{color: item.is_collected ? 'red' : ''}" class="el-icon-star-on"></i>
+             <i :style="{color: item.is_collected ? 'red' : ''}" class="el-icon-star-on"></i>
               <i class="el-icon-delete"></i>
             </el-row>-->
           </el-card>
@@ -67,6 +71,48 @@ export default {
     }
   },
   methods: {
+    // 选择完图片之后执行
+    uploadImg (params) {
+      // 这是formdata类型
+      let obj = new FormData()
+      obj.append('image', params.file)
+      // console.log(params)
+      this.$axios({
+        url: '/user/images',
+        method: 'post',
+        // data: { image: params.file }
+        data: obj
+      }).then(() => {
+        this.getMaterial() // 重新加载
+      })
+    },
+    //   收藏或取消
+    collectOrcancel (item) {
+      // 确定它的状态
+      let mess = item.is_collected ? '取消' : ''
+      this.$confirm(`您确定要${mess}收藏这张图片?`, '提示1').then(() => {
+        //   确定收藏或者取消收藏
+        this.$axios({
+          url: `/user/images/${item.id}`,
+          method: `put`,
+          data: { collect: !item.is_collected } // 取相反
+        }).then(() => {
+          this.getMaterial() // 重新加载
+        })
+      })
+    },
+    delImg (item) {
+      this.$confirm('您确定要删除图片么', '提示').then(() => {
+        // 确定要删除
+        // 找文档,看接口
+        this.$axios({
+          url: `/user/images/${item.id}`,
+          method: `delete`
+        }).then(() => {
+          this.getMaterial() // 重新加载数据
+        })
+      })
+    },
     // 最新页码
     changePage (newPage) {
       this.page.page = newPage
@@ -106,6 +152,11 @@ export default {
 
 <style lang="less" scoped>
 .material {
+  .upload-btn {
+    position: absolute;
+    right: 10px;
+    margin-top: -10px;
+  }
   .card-list {
     display: flex;
     flex-wrap: wrap;

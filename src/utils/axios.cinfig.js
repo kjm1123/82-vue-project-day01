@@ -6,7 +6,7 @@ import jsonBigInt from 'json-bigint'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0' // 赋值基础地址
 axios.defaults.transformResponse = [function (data) {
   // data是响应回来的字符串
-  return jsonBigInt.parse(data)
+  return data ? jsonBigInt.parse(data) : {}
 }]
 
 // 请求拦截器
