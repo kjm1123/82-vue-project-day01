@@ -31,15 +31,18 @@
     <div class="total-info">共找到7231条符合条件的内容</div>
     <div class="article-list">
       <!-- 循坏项 -->
-      <div class="article-item" v-for="(item,index) in list " :key="index">
+      <div class="article-item" v-for = "(item,index) in list " :key = "index">
         <div class="left">
           <!-- 左侧 -->
           <!-- 一定要个list一个数据,要不出不来 -->
-          <img src="../../assets/images/img/404.png" alt />
+            <!-- 写0 是里边就一个地址,一张图片,所有要写下标0  -->
+            <img :src = "item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
+          <!-- <img src="../../assets/images/img/404.png" alt /> -->
           <div class="info">
-            <span class="title">有内鬼,交易取消</span>
-            <el-tag style="width : 60px">已发表</el-tag>
-            <span class="data">2019-09-03 08:16:26</span>
+            <span class="title">{{item.title}}</span>
+                <!-- 这个发表因为有好几种状态,所有要用过滤器 -->
+            <el-tag style="width : 80px">{{item.status | atatusText}}</el-tag>
+            <span class="data">{{item.pubdate}}</span>
           </div>
         </div>
         <div class="right">
@@ -60,7 +63,37 @@
 export default {
   data () {
     return {
-      list: [1, 2, 3, 4] // 定义一个空数组
+      list: [], // 定义一个空数组
+      defaultImg: require('../../assets/images/img/dfaulu-cover.jpg')
+    }
+  },
+  methods: {
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(result => {
+        this.list = result.data.results
+      })
+    }
+  },
+  created () {
+    this.getArticles()
+  },
+  filters: {
+    //   定义一个过滤器  过滤状态
+    atatusText: function (value) {
+      switch (value) {
+        case 0 :
+          return '草稿'
+        case 1 :
+          return '待审核'
+        case 2 :
+          return '已发表'
+        case 3 :
+          return '审核失败'
+        default :
+          break
+      }
     }
   }
 }
