@@ -60,7 +60,7 @@
           <span>
             <i class="el-icon-edit"></i> 修改
           </span>
-          <span>
+          <span @click = "delItem(item)">
             <i class="el-icon-delete"></i> 删除
           </span>
         </div>
@@ -98,6 +98,21 @@ export default {
     }
   },
   methods: {
+    // 做删除操作,
+    delItem (item) {
+      this.$confirm('您是否要删除此文章?', '提示').then(() => {
+        // 确定删除
+
+        this.$axios({
+          method: 'delete',
+          // 因为id是超过了安全限制,变成了bigName类型,所有要用大数据处理
+          url: `/articles/${item.id.toString()}`
+        }).then(() => {
+          // 重新拉取数据
+          this.getConditionArticle() // 获取删选的数据
+        })
+      })
+    },
     // 页码改变
     changePage (newpage) {
       this.page.page = newpage // 赋值新页码
@@ -145,7 +160,7 @@ export default {
   created () {
     this.getArticles()
     this.getChannels() // 获取频道数据
-  //   this.changeRadio()
+    //   this.changeRadio()
   },
 
   filters: {
