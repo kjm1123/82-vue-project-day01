@@ -35,6 +35,11 @@ export default new Router({
       {
         path: '/home/articles',
         component: () => import('./views/articles/index.vue')
+      },
+      // 发布文章
+      {
+        path: '/home/pubilish',
+        component: () => import('./views/publish/index.vue')
       }
       ]
     }
