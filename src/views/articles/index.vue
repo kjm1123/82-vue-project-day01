@@ -38,7 +38,7 @@
       </el-form-item>
     </el-form>
     <!-- //内容页面结构 -->
-    <div class="total-info">共找到7231条符合条件的内容</div>
+    <div class="total-info">共找到{{page.total}}条符合条件的内容</div>
     <div class="article-list">
       <!-- 循坏项 -->
       <div class="article-item" v-for = "(item,index) in list " :key = "index">
@@ -51,7 +51,7 @@
           <div class="info">
             <span class="title">{{item.title}}</span>
                 <!-- 这个发表因为有好几种状态,所有要用过滤器 -->
-            <el-tag style="width : 60px">{{item.status | atatusText}}</el-tag>
+            <el-tag :type = "item.status |  statusType" style="width : 60px">{{item.status | atatusText}}</el-tag>
             <span class="data">{{item.pubdate}}</span>
           </div>
         </div>
@@ -66,6 +66,13 @@
         </div>
       </div>
     </div>
+      <el-row type="flex" justify = "center" style="margin : 10px 0">
+          <el-pagination @current-change= "changePage" :current-page = "page.page" :page-size = "page.pageSize"  :total = "page.total"
+  background
+  layout="prev, pager, next"
+ >
+</el-pagination>
+       </el-row>
   </el-card>
 </template>
 
@@ -82,28 +89,47 @@ export default {
         channel_id: null,
         dateRange: [] // 数组[开始时间,结束时间]
       },
-      channels: [] // 存放列表数据
+      channels: [], // 存放列表数据
+      page: {
+        page: 1,
+        pageSize: 10,
+        total: 0
+      }
     }
   },
   methods: {
+    // 页码改变
+    changePage (newpage) {
+      this.page.page = newpage // 赋值新页码
+      this.getConditionArticle() // 获取删选的数据
+    },
+    // 改变搜索条件
     changeCondition () {
+      this.page.page = 1 // 默认回到第一页
       console.log(this.searchForm)
+      this.getConditionArticle() // 获取删选的数据
+    },
+    getConditionArticle () {
       let params = {
         status: this.searchForm.status === 5 ? null : this.searchForm.status,
         channel_id: this.searchForm.channel_id,
         begin_pubdate: this.searchForm.dateRange.length > 0 ? this.searchForm.dateRange[0] : null,
-        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null,
+        page: this.page.page,
+        per_page: this.page.pageSize
       }
 
       this.getArticles(params)
     },
+    // 查询文章的列表内容
     getArticles (params) {
-      console.log(123)
+      // console.log(123)
       this.$axios({
         url: '/articles',
         params: params
       }).then(result => {
         this.list = result.data.results
+        this.page.total = result.data.total_count
       })
     },
     // 获取频道数据
@@ -134,6 +160,22 @@ export default {
           return '已发表'
         case 3 :
           return '审核失败'
+        default :
+          break
+      }
+    },
+    // 现在要做草稿和发布的颜色和状态
+    // 定义类型过滤器
+    statusType: function (value) {
+      switch (value) {
+        case 0 :
+          return 'warning'
+        case 1 :
+          return 'info'
+        case 2 :
+          return 'success'
+        case 3 :
+          return 'danger'
         default :
           break
       }
