@@ -27,8 +27,8 @@
          </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button  @click = "publish"  type="primary">发表文章</el-button>
-        <el-button>存入草稿</el-button>
+        <el-button  @click = "publish(false)"  type="primary">发表文章</el-button>
+        <el-button @click = "publish(true)">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -74,34 +74,49 @@ export default {
       })
     },
     // 发布文章
-    publish () {
+    publish (draft) {
       this.$refs.publishForm.validate((isOk) => {
         if (isOk) {
+        // 只有校验成功了,才能去判断是修改接口还是 新增借口
+          let { articleId } = this.$route.params // 获取id
+          // 进行封装,因为他们只有url和method 不一样,进行定义
+          // let url, method
+          // if (articleId) {
+          //   url = `/articles/${articleId}`
+          //   method = 'put'
+          //   // 修改文章  调用修改文章的接口
+          // } else {
+          //   url = '/articles'
+          //   method = 'post'
+          // }
+          // 用三元表达式
+          let url = articleId ? `/articles/${articleId}` : '/articles'
+          let method = articleId ? 'put' : 'post'
           this.$axios({
-            url: '/articles',
-            method: 'post',
-            params: { draft: false }, // draft 为true时,就是草稿  为false时,是发布
+            url: url,
+            method: method,
+            params: { draft }, // draft 为true时,就是草稿  为false时,是发布
             // 因为body的参数和formDate的参数相同,所有
             data: this.formData
-          }).then((res) => {
+          }).then(() => {
             // 编程式导航
-            console.log(res)
+            // console.log(res)
             this.$router.push('/home/articles') // 跳转到文章列表页面
           })
         }
       })
     },
+
     // 通过id获取文章详情
     // 已经传过来id值,所有现在要取值
     getArticleById (articleId) {
-      // 现在些接口
+    // 现在些接口
       this.$axios({
         url: `/articles/${articleId}`
       }).then(result => {
         this.formData = result.data
       })
     }
-
   },
   created () {
     this.getChannels() // 获取频道
