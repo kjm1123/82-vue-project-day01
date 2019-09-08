@@ -5,7 +5,7 @@
       <template slot="title">发布文章</template>
     </bread-crumb>
     <!-- 表单 model 数据对象  rules 绑定规则 -->
-    <el-form ref="publishForm"          :model = "formData" :rules = "publishRules"  style="margin-left : 100px" label-width="100px">
+    <el-form ref="publishForm" :model = "formData" :rules = "publishRules"  style="margin-left : 100px" label-width="100px">
       <el-form-item prop = "title"  label="标题">
         <el-input v-model = "formData.title" style="width :400px"></el-input>
       </el-form-item>
@@ -48,6 +48,7 @@ export default {
         },
         channel_id: null
       },
+
       publishRules: {
         title: [{
           required: true,
@@ -72,16 +73,28 @@ export default {
         this.channels = result.data.channels
       })
     },
+    // 发布文章
     publish () {
-      this.$refs.publishForm.validate(function (isOk) {
+      this.$refs.publishForm.validate((isOk) => {
         if (isOk) {
-
+          this.$axios({
+            url: '/articles',
+            method: 'post',
+            params: { draft: false }, // draft 为true时,就是草稿  为false时,是发布
+            // 因为body的参数和formDate的参数相同,所有
+            data: this.formData
+          }).then((res) => {
+            // 编程式导航
+            console.log(res)
+            this.$router.push('/home/articles')
+          })
         }
       })
     }
   },
   created () {
     this.getChannels()
+    // this.publish()
   }
 }
 </script>
