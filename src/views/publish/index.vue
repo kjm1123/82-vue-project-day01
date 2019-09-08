@@ -14,7 +14,8 @@
         <quill-editor v-model = "formData.content" style="height :400px; width:800px"></quill-editor>
       </el-form-item>
       <el-form-item label="封面" style="margin-top : 120px">
-          <el-radio-group v-model = "formData.cover.type" >
+        <!-- //监听radio的改变事件 -->
+          <el-radio-group @change = "changeCoverType" v-model = "formData.cover.type" >
               <el-radio :label = "1"> 单图 </el-radio>
               <el-radio :label = "3"> 三图 </el-radio>
               <el-radio :label = "0"> 无图 </el-radio>
@@ -45,7 +46,7 @@ export default {
         content: '',
         cover: {
           type: 0, // 默认绑定为无图
-          images: []
+          images: ['']
         },
         channel_id: null
       },
@@ -67,6 +68,17 @@ export default {
     }
   },
   methods: {
+    // 切换封面类型  根据当前类型决定 images结构
+    changeCoverType () {
+      // alert(this.formData.cover.type)
+      if (this.formData.cover.type === 1) {
+        this.formData.cover.images = [''] // 有一张封面但选择
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', ''] // 有3张封面但选择
+      } else {
+        this.formData.cover.images = [] // 自动或者无图 没有内容
+      }
+    },
     getChannels () {
       this.$axios({
         url: '/channels'
