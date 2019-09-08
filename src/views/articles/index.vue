@@ -167,7 +167,6 @@ export default {
   created () {
     this.getArticles()
     this.getChannels() // 获取频道数据
-    //   this.changeRadio()
   },
 
   filters: {

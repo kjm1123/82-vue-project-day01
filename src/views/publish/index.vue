@@ -20,7 +20,7 @@
               <el-radio :label = "-1"> 自动 </el-radio>
             </el-radio-group>
       </el-form-item>
-      <el-form-item    prop = "channel_id" label="频道">
+      <el-form-item prop = "channel_id" label="频道">
           <el-select value="" v-model = "formData.channel_id">
               <!-- //label是显示值   value 是真实值 -->
               <el-option v-for = "item in channels" :key = "item.id" :label= "item.name" :value = "item.id"> </el-option>
@@ -86,15 +86,34 @@ export default {
           }).then((res) => {
             // 编程式导航
             console.log(res)
-            this.$router.push('/home/articles')
+            this.$router.push('/home/articles') // 跳转到文章列表页面
           })
         }
       })
+    },
+    // 通过id获取文章详情
+    // 已经传过来id值,所有现在要取值
+    getArticleById (articleId) {
+      // 现在些接口
+      this.$axios({
+        url: `/articles/${articleId}`
+      }).then(result => {
+        this.formData = result.data
+      })
     }
+
   },
   created () {
-    this.getChannels()
+    this.getChannels() // 获取频道
     // this.publish()
+    let { articleId } = this.$route.params // 获取id
+    // 如果可以获取到id
+    if (articleId) {
+      // 如果存在,说明是修改文章,如果不存在,说明是发布文章
+      // 通过Id来获取文章数据
+      // 调用上边的方法
+      this.getArticleById(articleId)
+    }
   }
 }
 </script>
