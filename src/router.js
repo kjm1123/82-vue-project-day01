@@ -39,6 +39,11 @@ export default new Router({
       // 发布文章
       {
         path: '/home/pubilish',
+        component: () => import('./views/articles/index.vue')
+      },
+      // 修改文章
+      {
+        path: '/home/pubilish/:articleId', // 定义动态路由参数
         component: () => import('./views/publish/index.vue')
       }
       ]

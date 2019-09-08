@@ -57,7 +57,8 @@
         </div>
         <div class="right">
           <!-- 右侧 -->
-          <span>
+          <!-- //给修改按钮注册一个事件 -->
+          <span @click = "modifyTtem(item)">
             <i class="el-icon-edit"></i> 修改
           </span>
           <span @click = "delItem(item)">
@@ -98,6 +99,12 @@ export default {
     }
   },
   methods: {
+    // 这是修改内容
+    modifyTtem (item) {
+      // 跳转到发布页面
+      // 使用编程式导航
+      this.$router.push(`/home/pubilish/${item.id.toString()}`)
+    },
     // 做删除操作,
     delItem (item) {
       this.$confirm('您是否要删除此文章?', '提示').then(() => {
