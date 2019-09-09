@@ -1,36 +1,46 @@
 <template>
   <el-card>
-
     <bread-crumb slot="header">
       <template slot="title">发布文章</template>
     </bread-crumb>
-<!-- {{formData}} -->
+    <!-- {{formData}} -->
     <!-- 表单 model 数据对象  rules 绑定规则 -->
-    <el-form ref="publishForm" :model = "formData" :rules = "publishRules"  style = "margin-left : 100px" label-width="100px">
-      <el-form-item prop = "title"  label="标题">
-        <el-input v-model = "formData.title" style="width :400px"></el-input>
+    {{formData}}
+    <el-form
+      ref="publishForm"
+      :model="formData"
+      :rules="publishRules"
+      style="margin-left : 100px"
+      label-width="100px"
+    >
+      <el-form-item prop="title" label="标题">
+        <el-input v-model="formData.title" style="width :400px"></el-input>
       </el-form-item>
-      <el-form-item  prop = "content" label="内容">
-        <quill-editor v-model = "formData.content" style="height :400px; width:800px"></quill-editor>
+      <el-form-item prop="content" label="内容">
+        <quill-editor v-model="formData.content" style="height :400px; width:800px"></quill-editor>
       </el-form-item>
       <el-form-item label="封面" style="margin-top : 120px">
         <!-- //监听radio的改变事件 -->
-          <el-radio-group @change = "changeCoverType" v-model = "formData.cover.type" >
-              <el-radio :label = "1"> 单图 </el-radio>
-              <el-radio :label = "3"> 三图 </el-radio>
-              <el-radio :label = "0"> 无图 </el-radio>
-              <el-radio :label = "-1"> 自动 </el-radio>
-            </el-radio-group>
-      </el-form-item>
-      <el-form-item prop = "channel_id" label="频道">
-          <el-select value="" v-model = "formData.channel_id">
-              <!-- //label是显示值   value 是真实值 -->
-              <el-option v-for = "item in channels" :key = "item.id" :label= "item.name" :value = "item.id"> </el-option>
-         </el-select>
+        <el-radio-group @change="changeCoverType" v-model="formData.cover.type">
+          <el-radio :label="1">单图</el-radio>
+          <el-radio :label="3">三图</el-radio>
+          <el-radio :label="0">无图</el-radio>
+          <el-radio :label="-1">自动</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item>
-        <el-button  @click = "publish(false)"  type="primary">发表文章</el-button>
-        <el-button @click = "publish(true)">存入草稿</el-button>
+        <!-- 封面图片组件 -->
+        <cover-image @onclickImg="receiveImg" :images="formData.cover.images"></cover-image>
+      </el-form-item>
+      <el-form-item prop="channel_id" label="频道">
+        <el-select value v-model="formData.channel_id">
+          <!-- //label是显示值   value 是真实值 -->
+          <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="publish(false)" type="primary">发表文章</el-button>
+        <el-button @click="publish(true)">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -46,28 +56,47 @@ export default {
         content: '',
         cover: {
           type: 0, // 默认绑定为无图
-          images: ['']
+          images: []
         },
         channel_id: null
       },
 
       publishRules: {
-        title: [{
-          required: true,
-          message: '标题不能为空'
-        }],
-        content: [{
-          required: true,
-          message: '内容不能为空'
-        }],
-        channel_id: [{
-          required: true,
-          message: '频道不能为空'
-        }]
+        title: [
+          {
+            required: true,
+            message: '标题不能为空'
+          }
+        ],
+        content: [
+          {
+            required: true,
+            message: '内容不能为空'
+          }
+        ],
+        channel_id: [
+          {
+            required: true,
+            message: '频道不能为空'
+          }
+        ]
       }
     }
   },
   methods: {
+    receiveImg (url, index) {
+      // alert('cover-image传过来的' + url)
+      // 拿到地址 更新images 需要知道更新哪一条
+      // this.formData.cover.images = this.formData.cover.images.map(function (item, i) {
+      //   // 用判断
+      //   if (i === index) {
+      //     return url
+      //   }
+      //   return item
+      // })
+      // 上边注视的代码有点low 所以现在要封装一个新的代码
+      this.formData.cover.images = this.formData.cover.images.map((item, i) => i === index ? url : item)
+    },
     // 切换封面类型  根据当前类型决定 images结构
     changeCoverType () {
       // alert(this.formData.cover.type)
@@ -88,9 +117,9 @@ export default {
     },
     // 发布文章
     publish (draft) {
-      this.$refs.publishForm.validate((isOk) => {
+      this.$refs.publishForm.validate(isOk => {
         if (isOk) {
-        // 只有校验成功了,才能去判断是修改接口还是 新增借口
+          // 只有校验成功了,才能去判断是修改接口还是 新增借口
           let { articleId } = this.$route.params // 获取id
           // 进行封装,因为他们只有url和method 不一样,进行定义
           // let url, method
@@ -123,7 +152,7 @@ export default {
     // 通过id获取文章详情
     // 已经传过来id值,所有现在要取值
     getArticleById (articleId) {
-    // 现在些接口
+      // 现在些接口
       this.$axios({
         url: `/articles/${articleId}`
       }).then(result => {
