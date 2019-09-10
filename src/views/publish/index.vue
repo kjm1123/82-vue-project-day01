@@ -19,7 +19,7 @@
       <el-form-item prop="content" label="内容">
         <quill-editor v-model="formData.content" style="height :400px; width:800px"></quill-editor>
       </el-form-item>
-      <el-form-item label="封面" style="margin-top : 120px">
+      <el-form-item label="封面" style="margin-top : 120px" prop ="cover">
         <!-- //监听radio的改变事件 -->
         <el-radio-group @change="changeCoverType" v-model="formData.cover.type">
           <el-radio :label="1">单图</el-radio>
@@ -48,7 +48,29 @@
 
 <script>
 export default {
+  // 定义一个函数
   data () {
+    let func = function (rule, value, callBack) {
+      // 执行成功的话,使用callBack
+      // debugger
+      // callBack()
+      if (value.type === 1) {
+        (value.images.length === 1 && value.images[0] ? callBack() : callBack(new Error('对不起,您未设置单独的封面')))
+      } else if (value.type === 3) {
+        if (value.images.length === 1 && value.images[0] && value.images[1] && value.images[2]) {
+          callBack()
+        } else {
+          callBack(new Error('对不起,你为设置'))
+        }
+      } else {
+        // 无图或者自动
+        if (value.images.length > 0) {
+          callBack(new Error('对不起,您设置有误'))
+        } else {
+          callBack()
+        }
+      }
+    }
     return {
       channels: [],
       formData: {
@@ -66,6 +88,11 @@ export default {
           {
             required: true,
             message: '标题不能为空'
+          },
+          {
+            min: 5,
+            max: 30,
+            message: '标题长度必须为5-30之间'
           }
         ],
         content: [
@@ -79,7 +106,10 @@ export default {
             required: true,
             message: '频道不能为空'
           }
-        ]
+        ],
+        cover: [{
+          validator: func // 自定义校验函数
+        }]
       }
     }
   },
