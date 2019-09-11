@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import eventsBus from '../../utils/event' // 公共的vue实例
 export default {
   data () {
     return {
@@ -58,6 +59,7 @@ export default {
   },
   methods: {
     uploadHeaderImg (params) {
+      this.loading = true // 显示进度条
       let data = new FormData()
       data.append('photo', params.file)
       this.$axios({
@@ -65,6 +67,8 @@ export default {
         url: '/user/photo',
         data: data
       }).then(() => {
+        this.loading = false // 关闭进度条
+        eventsBus.$emit('updateUserInfo') // 相当于打出了一个电话号码   电话号码指的是updateUserInfo
         this.getUserInfo()
       })
     },
@@ -84,6 +88,8 @@ export default {
             data: this.userInfo
           }).then(() => {
             this.$message({ type: 'success', message: '恭喜成功' })
+            // 成功之后,要通过头部去更新实例
+            eventsBus.$emit('updateUserInfo') // 相当于打出了一个电话号码   电话号码指的是updateUserInfo
           })
         }
       })

@@ -86,6 +86,10 @@ export default {
     }
   },
   created () {
+    // eventbus做事件
+    this.$on('onSelectImg', function (url) {
+      alert(url)
+    })
     this.getMaterial()
   }
 }

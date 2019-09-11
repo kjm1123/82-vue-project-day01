@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import eventBus from '../../utils/event'
 export default {
   // 这是本地数据,将获取到的用户数据给了本地数据
   data () {
@@ -73,6 +74,10 @@ export default {
     }
   },
   created () {
+    // 电话要一直监听,在电话来之前就开始监听
+    eventBus.$on('updateUserInfo', () => {
+      this.getUseInfo()
+    })
     this.getUseInfo()
   }
 }
