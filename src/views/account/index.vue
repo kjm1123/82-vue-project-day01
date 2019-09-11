@@ -5,6 +5,9 @@
                 账户信息
             </template>
         </bread-crumb>
+        <el-upload action="" :http-request = "uploadHeaderImg" :show-file-list="false">
+            <img class="header-image" :src = "userInfo.photo ? userInfo.photo : defauitImg " alt="">
+        </el-upload>
         <el-form ref = "userForm" :model = "userInfo" :rules = "userRules" label-width="100px">
             <el-form-item  label="用户名" prop="name">
                 <el-input v-model = "userInfo.name" style="width :300px"></el-input>
@@ -29,6 +32,7 @@
 export default {
   data () {
     return {
+      defauitImg: require('../../assets/images/img/dfaulu-cover.jpg'),
       userInfo: {
         name: '',
         intro: '',
@@ -53,6 +57,17 @@ export default {
     }
   },
   methods: {
+    uploadHeaderImg (params) {
+      let data = new FormData()
+      data.append('photo', params.file)
+      this.$axios({
+        method: 'patch',
+        url: '/user/photo',
+        data: data
+      }).then(() => {
+        this.getUserInfo()
+      })
+    },
     getUserInfo () {
       this.$axios({
         url: '/user/profile'
@@ -80,6 +95,12 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang = "less" scoped>
+    .header-image {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        margin-left : 500px;
+    }
 </style>
