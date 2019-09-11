@@ -52,8 +52,8 @@
                 粉丝画像
                  </el-menu-item>
              </el-submenu>
-          </el-menu-item>
-      <el-menu-item index="3">
+              <!-- </el-menu-item> -->
+      <el-menu-item index="/home/account">
         <i class="el-icon-setting"></i>
         <span slot="title">账户信息</span>
       </el-menu-item>
